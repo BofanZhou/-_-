@@ -1,0 +1,404 @@
+%! Mode:: "TeX:UTF-8"
+%! TEX program = xelatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  2026 全国大学生数学建模竞赛 · 论文模板（合并版）
+%
+%  编译 : 必须用 xelatex。推荐终端执行：  latexmk -xelatex main
+%         手动四步：xelatex main → bibtex main → xelatex main → xelatex main
+%
+%  2026 规范要点：
+%   1. 电子版第一页必须是摘要页（不要承诺书/编号页）→ withoutpreface 选项
+%   2. 页码从摘要页开始，页脚中部，阿拉伯数字从 1 连续编号 → 类文件已设好
+%   3. 不要目录；正文不超过 30 页
+%   4. AI 工具使用声明放在【参考文献之前】，两句二者择一（见下方开关）
+%   5. 附录必须含「支撑材料文件列表」+ 全部可运行源程序
+%   6. 全文（含附录）不得出现姓名、学校、赛区信息
+%   7. 摘要页（含标题与关键词）原则上不超过 1 页
+%   8. 电子版论文必须是【单个】PDF/Word 文件、不要压缩、不超过 20MB；
+%      支撑材料单独打包成 RAR/ZIP（≤20MB）提交，论文附录里放文件列表
+%   9. 附录页数不限，但必须与正文一起打印装订提交
+%
+%  依据：《全国大学生数学建模竞赛论文格式规范（2026年修订稿）》
+%        《全国大学生数学建模竞赛人工智能工具使用规定（2026年试行）》
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[withoutpreface,bwprint]{cumcmthesis}
+% withoutpreface : 去掉承诺书与编号页（电子版提交必须加）
+% bwprint        : 黑白打印，交叉引用不带彩色
+% 需要纸质打印版（含承诺书+编号页）时，改成：\documentclass[bwprint]{cumcmthesis}
+
+% ============================ 宏包 ============================
+\usepackage{cumcm2026}                              % 2026 版式 + AI 声明命令
+\usepackage[numbers,sort&compress]{natbib}          % 参考文献（配合 gbt7714）
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+
+% 修正官方 v2.9 类文件的小瑕疵：附录内子节编号跟随 A、B（否则会显示成 2.1、2.2）
+\AtBeginEnvironment{appendices}{%
+  \renewcommand\thesubsection{\thesection.\arabic{subsection}}%
+  \renewcommand\thesubsubsection{\thesubsection.\arabic{subsubsection}}%
+}
+
+% 表格列格式
+% cumcm2026.sty 已经提供：Y = X 居中列，R = X 右对齐列，L = X 左对齐列，C{宽度} = 定宽居中 p 列。
+% 不要再 \newcolumntype 去定义 C / R / L，否则会覆盖 cumcm2026.sty 的定义
+% （编译时会出现 "Package array Warning: Column C is already defined"），
+% 而且会破坏 C{宽度} 这种用法。
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}   % 备用：定宽垂直居中列
+
+% 表格整体字号（嫌表格字小可注释掉本行）
+\BeforeBeginEnvironment{tabular}{\zihao{-5}}
+
+% 流程图节点样式（可按需修改）
+\tikzset{
+  startstop/.style = {rectangle, rounded corners, minimum width=3cm, minimum height=1cm,
+                      text centered, draw=black, fill=red!20},
+  process/.style   = {rectangle, minimum width=3.5cm, minimum height=1cm,
+                      text centered, draw=black, fill=blue!20},
+  decision/.style  = {diamond, aspect=2, minimum width=3.5cm, minimum height=1cm,
+                      text centered, draw=black, fill=green!20},
+  io/.style        = {trapezium, trapezium left angle=70, trapezium right angle=110,
+                      minimum width=3cm, minimum height=1cm, text centered,
+                      draw=black, fill=orange!20},
+  arrow/.style     = {thick, ->, >=stealth},
+}
+
+% ============================ 题目 ============================
+\title{【在此填写论文标题】}
+
+% 以下信息电子版用不到，纸质版自动生成承诺书与编号页时填写
+\tihao{}
+\baominghao{}
+\schoolname{}
+\membera{ }
+\memberb{ }
+\memberc{ }
+\supervisor{ }
+\yearinput{}
+\monthinput{}
+\dayinput{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle                     % 摘要页（本页即第 1 页，页码在页脚中部）
+
+% ============================ 摘要 ============================
+\begin{abstract}
+
+本文针对【问题背景一句话】问题，综合运用【方法 A】、【方法 B】与【方法 C】，
+建立了【模型名称】，对各问进行了求解与检验。
+
+\textbf{对于问题一，}【建立了什么模型，用了什么方法/数据，得到了什么关键结果（含数值）】。
+简要说明建模思路、求解算法与结论，突出量化结果。
+
+\textbf{对于问题二，}【在问题一基础上做了什么改进或引入了什么新机制，结果如何】。
+
+\textbf{对于问题三，}【模型形式、求解手段、结果与误差/灵敏度表现】。
+
+\textbf{对于问题四，}【若为开放性问题，说明决策建议与结论，给出可执行的方案及依据】。
+
+最后，本文对模型的优缺点进行了分析，通过【灵敏度分析/误差分析/对比实验】验证了
+模型的【稳健性/合理性】，并给出了模型的改进方向与推广前景。
+
+\keywords{热风干燥；传热传质耦合；有限体积法；收缩移动边界；数值验证}
+\end{abstract}
+
+% 目录：2026 规范明确「不要目录」，故此命令一律不要解注释
+%\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{问题重述}
+
+\subsection{问题背景}
+
+本题的特点是\textbf{}
+\subsection{问题提出}
+
+\textbf{问题1}
+
+\textbf{问题2}
+
+\textbf{问题3}
+
+\textbf{问题4}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{问题分析}
+
+\begin{enumerate}[label=(\arabic*)]
+  \item 第1问：
+  \item 第2问：
+  \item 第3问：
+  \item 第4问：
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    %\includegraphics[width=0.85\textwidth]{figures/flowchart.pdf}
+    \begin{tikzpicture}[node distance=1.2cm]
+        \node (in)   [io]                      {赛题数据与要求};
+        \node (p1)   [process, below=of in]    {数据预处理与特征分析};
+        \node (p2)   [process, below=of p1]    {问题一：模型一建立与求解};
+        \node (p3)   [process, below=of p2]    {问题二：模型二建立与求解};
+        \node (p4)   [process, below=of p3]    {问题三/四：模型三建立与求解};
+        \node (out)  [startstop, below=of p4]  {结果分析与检验};
+        \draw [arrow] (in) -- (p1);
+        \draw [arrow] (p1) -- (p2);
+        \draw [arrow] (p2) -- (p3);
+        \draw [arrow] (p3) -- (p4);
+        \draw [arrow] (p4) -- (out);
+    \end{tikzpicture}
+    \caption{本文总体建模思路}
+    \label{fig:flowchart}
+\end{figure}
+
+如图~\ref{fig:flowchart}~所示，本文的总体框架为……
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{模型假设}
+
+为简化问题并突出主要矛盾，本文做出以下假设：
+
+\begin{itemize}[itemindent=2em]
+    \item \textbf{假设1：}【假设内容】。理由：【为什么该假设是可接受的】。
+    \item \textbf{假设2：}【假设内容】。理由：【……】。
+    \item \textbf{假设3：}【假设内容】。理由：【……】。
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{符号说明}
+
+\begin{table}[H]
+    \centering
+    \caption{主要符号说明}
+    \label{tab:symbols}
+    \begin{tabularx}{\textwidth}{YL}
+        \toprule
+        符号 & 说明 \\
+        \midrule
+        $n$                     & 样本总数 \\
+        $d$                     & 每个样本的特征个数 \\
+        $\boldsymbol{x}^{(i)}$  & 第 $i$ 个样本的特征向量，$\boldsymbol{x}^{(i)}=(x_1^{(i)},\dots,x_d^{(i)})$ \\
+        $y^{(i)}$               & 第 $i$ 个样本的目标变量取值 \\
+        $f(\cdot)$              & 所构建的预测/评价函数 \\
+        $\Omega(f)$             & 正则化项 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+注：其余符号在首次出现处随文说明。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\section{模型准备}
+
+\section{问题一的模型建立与求解}
+
+\subsection{具体分析}
+
+【面向问题一，说明输入是什么、输出是什么、评价标准是什么，
+以及为什么选择该类模型（与备选方案对比一句）。】
+
+\subsection{数据预处理}
+
+【缺失值、异常值、量纲、数据集划分等。可在此插入预处理前后的对比图表。】
+
+\subsection{模型建立}
+
+【给出模型的一般形式、目标函数与约束，公式居中并编号：】
+
+\begin{equation}
+    \min_{\boldsymbol{w}} \; \sum_{i=1}^{n} \ell\!\left(y^{(i)}, f(\boldsymbol{x}^{(i)})\right)
+    + \lambda \Omega(f),
+    \label{eq:obj}
+\end{equation}
+
+其中 $\ell(\cdot,\cdot)$ 为损失函数，$\lambda$ 为正则化系数。
+式~\eqref{eq:obj}~中的各项含义为……
+
+\subsection{模型求解}
+
+【算法流程 + 关键参数设置 + 伪代码。建议贴表给出参数取值。】
+
+\begin{table}[H]
+    \centering
+    \caption{问题一模型参数设置}
+    \label{tab:p1-params}
+    \begin{tabular}{cccc}
+        \toprule
+        参数 & 含义 & 取值 & 选取依据 \\
+        \midrule
+        $\lambda$ & 正则化系数 & 【值】 & 【网格搜索/交叉验证】 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{结果分析}
+
+【给出量化结果（表格）、可视化（图），并解释原因，不要只罗列数字。】
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{问题二的模型建立与求解}
+
+\subsection{具体分析}
+
+\subsection{模型建立}
+
+\subsection{模型求解}
+
+\subsection{结果分析}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{问题三的模型建立与求解}
+
+\subsection{具体分析}
+
+\subsection{模型建立}
+
+\subsection{模型求解}
+
+\subsection{结果分析}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 注：若赛题只有三问（A/B/C 常见情况），请把「问题四」这一节连同上面的 \newpage
+%     一直删到 \subsection{结果分析} 结束。
+\newpage
+\section{问题四的模型建立与求解}
+
+\subsection{具体分析}
+
+\subsection{模型建立}
+
+\subsection{模型求解}
+
+\subsection{结果分析}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{模型的分析与检验}
+
+\subsection{灵敏度分析}
+
+【改变关键参数 $\lambda$、阈值等，观察结果变化幅度，说明模型稳健性。
+建议给出扫描表或曲线图。】
+
+\subsection{误差分析}
+
+【说明误差来源（数据、模型、数值）与量级，必要时给出置信区间或误差上界。】
+
+\subsection{模型对比（可选）}
+
+【与基线方法/其他模型在同一指标下对比，用表格呈现。】
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{模型的评价、改进与推广}
+
+\subsection{模型的优点}
+\begin{itemize}[itemindent=2em]
+    \item 优点1【……】。
+    \item 优点2【……】。
+    \item 优点3【……】。
+\end{itemize}
+
+\subsection{模型的缺点}
+\begin{itemize}[itemindent=2em]
+    \item 缺点1【……】。
+    \item 缺点2【……】。
+\end{itemize}
+
+\subsection{模型的改进}
+
+【针对缺点给出具体可操作的改进方案，而不是「以后可以做得更好」。】
+
+\subsection{模型的推广}
+
+【说明模型可迁移到哪些同类场景。】
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ====================== AI 工具使用声明（必须） ======================
+% 2026 规定：声明必须置于【参考文献之前】，以下两句「二者择一」，
+% 请删掉不适用的那一行，务必保留完整原句，不要留空标题！
+%
+% 下面这行让"AI 工具使用声明"单独起一页（规范只要求它在参考文献之前，
+% 若想让声明紧接正文，把 \newpage 删掉即可）：
+\newpage
+%
+% （1）未使用任何 AI 工具：
+\CumcmAINotUsed
+%
+% （2）使用了 AI 工具：填写简要用途后，注释掉上面的 \CumcmAINotUsed，
+%     并解注释下面这一行（用途示例：语言润色、代码调试、资料整理）：
+%\CumcmAIUsed{语言润色、代码调试}
+%
+% 注意：若使用了 AI，还必须在【支撑材料】中放入单独的 PDF
+%       文件名必须为：AI工具使用详情.pdf
+%       用本目录下的 ai-details.tex 编译生成后改名即可。
+%       不要把「AI工具使用详情」写进论文正文！
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ============================ 参考文献 ============================
+% 2026 规范：正文引用处必须标注，附录列出全部来源。
+% 本文献表由 ref.bib + gbt7714-numerical.bst 生成（GB/T 7714 格式）。
+%\nocite{*}                       % 解注释 = 把 ref.bib 里所有条目都列出
+\bibliographystyle{gbt7714-numerical}
+\bibliography{ref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\begin{appendices}
+
+\section{支撑材料文件列表}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{LL}
+        \toprule
+        文件名 & 功能描述 \\
+        \midrule
+        1.数据预处理.py        & 数据清洗、特征构造与数据集划分 \\
+        q1.m                   & 问题一模型求解程序（MATLAB） \\
+        q2.py                  & 问题二模型求解程序（Python） \\
+        q3.c                   & 问题三模型求解程序（C） \\
+        q4.cpp                 & 问题四模型求解程序（C++） \\
+        AI工具使用详情.pdf      & AI 工具使用详情说明（如使用 AI 则必须提供） \\
+        \bottomrule
+    \end{tabularx}
+    \label{tab:filelist}
+\end{table}
+
+注：若确实没有用到程序，此处应写明「本论文没有用到程序」；
+若确实没有支撑材料，写明「本论文没有支撑材料」。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{源程序代码}
+
+\subsection{数据预处理（Python）}
+\lstinputlisting[language=python]{code/1.数据预处理.py}
+
+\subsection{问题一求解（MATLAB）}
+%\lstinputlisting[language=matlab]{code/q1.m}
+
+\subsection{问题二求解（Python）}
+%\lstinputlisting[language=python]{code/q2.py}
+
+\subsection{问题三求解（C）}
+%\lstinputlisting[language=c]{code/q3.c}
+
+\subsection{问题四求解（C++）}
+%\lstinputlisting[language=c++]{code/q4.cpp}
+
+% 提示：代码量大时建议全部解注释——规范要求附录打印全部完整、可运行的源码。
+%
+% ⚠️ code/ 目录里现在放的是【可运行的占位示例】，只是为了让你看到源码在附录里的排版效果。
+%    提交前必须换成本题的真实程序，并同步修改附录 A 的文件列表；
+%    代码里不得出现个人绝对路径、姓名、学校、赛区信息（规范第六条）。
+
+\end{appendices}
+
+\end{document}

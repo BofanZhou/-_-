@@ -1,0 +1,131 @@
+%! Mode:: "TeX:UTF-8"
+%! TEX program = xelatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  AI 工具使用详情（支撑材料专用文档）
+%
+%  编译：xelatex ai-details.tex
+%  编译后把生成的 ai-details.pdf 重命名为   AI工具使用详情.pdf
+%  放入支撑材料压缩包（与论文分开提交，不要并入论文正文！）
+%
+%  2026 规定：使用 AI 工具的参赛作品必须在支撑材料中提供本文件（PDF 格式，
+%  文件名「AI工具使用详情.pdf」），内容包括：
+%    (1) 所用 AI 工具名称、版本或型号；
+%    (2) 具体使用目的和环节；
+%    (3) 主要提示方式与使用过程说明（可附典型交互示例）；
+%    (4) 对 AI 输出的采纳、人工修改和核验的主要情况（语言润色除外）。
+%  本文件内不得出现参赛者姓名、学校、赛区信息。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt,a4paper]{ctexart}
+
+\usepackage{geometry}
+\geometry{top=25mm,bottom=25mm,left=25mm,right=25mm}
+\usepackage{booktabs,tabularx,array,multirow}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{longtable}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\linespread{1.35}
+\setlength{\parindent}{2em}
+
+\begin{document}
+
+\begin{center}
+  {\zihao{3}\bfseries AI 工具使用详情}
+\end{center}
+\vspace{0.5em}
+
+\section*{一、工具信息}
+
+\begin{table}[h]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}P{3.2cm}L@{}}
+    \toprule
+    项目 & 填写内容 \\
+    \midrule
+    竞赛题号 & 【A / B / C】 \\
+    工具名称 & 【填写实际使用的产品或工具名称】 \\
+    版本或型号 & 【填写实际版本、模型名称或可识别的型号】 \\
+    使用日期 & 【YYYY-MM-DD 至 YYYY-MM-DD】 \\
+    运行方式 & 【网页端 / 客户端 / 编辑器插件 / 本地部署】 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section*{二、具体使用目的和环节}
+
+逐项说明 AI 用于语言润色、代码调试、资料整理或其他环节；不得笼统写「辅助论文」。
+应明确其输入、输出及对应论文位置。
+
+\begin{table}[h]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}C P{2.6cm} L P{2.2cm}@{}}
+    \toprule
+    序号 & 使用环节 & 具体目的与输入/输出 & 对应论文位置 \\
+    \midrule
+    1 & 代码调试 & 【如：对 XX 求解程序报错信息进行定位建议，输入为报错日志与相关代码片段，输出为排查思路】 & 附录 A.2 \\
+    2 & 语言润色 & 【如：对摘要与结论段落的语句通顺度进行润色，未改动结论与数据】 & 摘要、第 8 节 \\
+    3 & 资料整理 & 【如：归纳 XX 方法的适用条件，输出经人工核对原始文献后使用】 & 3.3 节 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section*{三、主要提示方式与使用过程}
+
+说明主要提示策略与迭代过程，可附具有代表性的交互片段。
+不要包含参赛者姓名、学校或赛区信息。
+
+\begin{enumerate}[label=\arabic*), leftmargin=2.2em, itemsep=0.35em]
+  \item \textbf{整体提示策略}：【如先提供问题背景与变量定义，要求给出建模思路候选，
+        再由队员筛选；对代码类请求要求给出最小可复现改动并附解释。】
+  \item \textbf{典型交互示例（示例 1）}：
+        提示词：「【粘贴实际使用的提示词】」
+        → 输出要点：「【AI 输出的核心内容】」
+        → 处理方式：「【采纳/部分采纳/未采纳，并说明原因】」
+  \item \textbf{典型交互示例（示例 2）}：
+        提示词：「【……】」
+        → 输出要点：「【……】」
+        → 处理方式：「【……】」
+  \item \textbf{迭代与终止}：【说明经过几轮迭代、以什么标准判断可以停止使用 AI。】
+\end{enumerate}
+
+\section*{四、采纳、人工修改与核验}
+
+除语言润色外，逐项记录 AI 输出是否采纳、由谁进行何种人工修改、采用何种数据或
+实验复核，以及最终结论是否发生变化。
+
+\begin{table}[h]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}C P{2.4cm} C L@{}}
+    \toprule
+    序号 & 对应环节 & 是否采纳 & 人工修改与核验方式 \\
+    \midrule
+    1 & 代码调试 & 部分采纳 & 【如：采纳排查思路，最终代码由队员重写并独立运行通过，
+        输出结果与论文表 X 一致】 \\
+    2 & 语言润色 & 采纳     & 【仅文字表述，未涉及数据与结论，结论无变化】 \\
+    3 & 资料整理 & 部分采纳 & 【如：对照原始文献逐条核对，修正 2 处表述，结论未变】 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section*{五、人工核验清单}
+
+\begin{enumerate}[label=\arabic*), leftmargin=2.2em, itemsep=0.3em]
+  \item 核对公式推导、单位、边界条件和符号一致性；
+  \item 在独立环境中运行全部代码并复现论文表图；
+  \item 核验引用、数据来源和事实陈述；
+  \item 确认核心建模与分析由参赛队主导；
+  \item 确认论文声明与本详情文件一致。
+\end{enumerate}
+
+\vspace{1em}
+\noindent
+\textbf{声明}：本队已阅读《全国大学生数学建模竞赛人工智能工具使用规定（2026 年试行）》，
+本详情所列使用情况真实、完整，AI 参与完成的内容均已逐项人工审查与核实，
+核心建模与分析由参赛队主导完成。
+
+\end{document}

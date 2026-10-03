@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 04 课 · 编程弹药库：TOP 方法可跑通示例</title>
+<link rel="stylesheet" href="../assets/course.css">
+<script src="../assets/quiz.js"></script>
+</head>
+<body>
+
+<div class="kicker">数学建模国赛 · 队长领航课 04 / 建议完成日 09-02</div>
+<h1>赛前造好枪，赛场只扣扳机</h1>
+<p>手册的赛前验收标准只有一句话：<strong>每个模板都要有「能跑通的最小示例」</strong>。赛场 74 小时不是写算法的时间，是组装算法的时间——本课给你 5 段可直接跑通的弹药，覆盖语料库 TOP 方法的大半江山。</p>
+
+<div class="mission-banner">
+  <b>你的任务</b> · 本课约 40 分钟（含动手）：把 5 段代码在离线环境各跑通一次，勾完弹药库清单。产出：一个随时能调用的模板文件夹。
+</div>
+
+<h2>一、弹药清单（对应语料库 TOP 方法）</h2>
+<table>
+  <tr><th style="width:26%">模板</th><th style="width:30%">覆盖语料库中的位置</th><th>典型用途</th></tr>
+  <tr><td>最小二乘/非线性拟合</td><td>出现率第 1（27.4%，题目级 52.1%）</td><td>机理题效率拟合、数据题关系刻画</td></tr>
+  <tr><td>0-1/整数规划</td><td>线性 10.4% + 整数 7.7%</td><td>生产决策、选点、指派</td></tr>
+  <tr><td>PSO/GA 启发式</td><td>遗传 15.1%、模拟退火 6.9%</td><td>非线性多变量优化的主力与复证</td></tr>
+  <tr><td>灵敏度/蒙特卡洛扫描</td><td>灵敏度 22.0%、蒙特卡洛 10.0%</td><td>检验三件套的执行器（第 6 课）</td></tr>
+  <tr><td>线性混合效应 LMM</td><td>回归 24.3%（C 题主力 43.5%）</td><td>纵向数据、个体差异建模（2025C 同款）</td></tr>
+</table>
+
+<h2>二、五段弹药（Python，离线可跑）</h2>
+
+<h3>① 最小二乘/非线性拟合 + R²（R² 进摘要）</h3>
+<pre class="code">import numpy as np
+from scipy.optimize import curve_fit
+
+x = np.array([...]); y = np.array([...])          # 你的数据
+f = lambda x, a, b, c: a*x**2 + b*x + c           # 换成你的模型形式
+(a,b,c), _ = curve_fit(f, x, y)
+yhat = f(x, a, b, c)
+r2 = 1 - ((y-yhat)**2).sum() / ((y-y.mean())**2).sum()
+print(a, b, c, "R2 =", round(r2, 4))</pre>
+
+<h3>② 0-1 规划（决策串 + 最优值，评委要的就是这个）</h3>
+<pre class="code">import numpy as np
+from scipy.optimize import milp, LinearConstraint, Bounds
+
+c = -profit                                        # milp 默认最小化，负号变最大化
+res = milp(c=c, constraints=LinearConstraint(A, -np.inf, b),
+           integrality=np.ones(len(c)),            # 全部变量为整数
+           bounds=Bounds(0, 1))                    # 取值 0/1
+print("".join(map(str, res.x.astype(int))), -res.fun)   # 例：1111111100011111  448518.0</pre>
+
+<h3>③ PSO 骨架（30 行，当主算法或复证算法都行）</h3>
+<pre class="code">import numpy as np
+def pso(f, dim, lo, hi, n=40, iters=200, w=0.7, c1=1.5, c2=1.5):
+    X = np.random.uniform(lo, hi, (n, dim)); V = np.zeros_like(X)
+    p = X.copy(); pf = np.array([f(x) for x in X])      # 个体最优
+    g = p[pf.argmin()].copy(); gf = pf.min()             # 全局最优（最小化）
+    for _ in range(iters):
+        r1, r2 = np.random.rand(2)
+        V = w*V + c1*r1*(p-X) + c2*r2*(g-X)
+        X = np.clip(X+V, lo, hi)
+        fit = np.array([f(x) for x in X])
+        m = fit &lt; pf; p[m], pf[m] = X[m], fit[m]
+        if pf.min() &lt; gf: g, gf = p[pf.argmin()].copy(), pf.min()
+    return g, gf
+
+g, best = pso(lambda z: ((z-3)**2).sum(), dim=5, lo=-10, hi=10)</pre>
+
+<h3>④ 灵敏度扫描（±10%，第 6 课的主力）</h3>
+<pre class="code">for delta in (-0.10, 0.0, 0.10):
+    out = run_model(base_param * (1 + delta))    # 换成你的模型函数
+    print(f"参数{delta:+.0%}  输出={out:.4f}")
+# 结论写一句：「参数 ±10% 时输出变化 X%，结论不翻转」</pre>
+
+<h3>⑤ LMM 三行（statsmodels，2025C 国奖同款框架）</h3>
+<pre class="code">import statsmodels.formula.api as smf
+m = smf.mixedlm("y ~ ga + I(ga**2) + bmi", data=df, groups=df["pid"])
+print(m.fit().summary())          # 随机截距/斜率、显著性、系数一次给全</pre>
+
+<h2>三、弹药库纪律</h2>
+<p>① <strong>先建确定性版本再上随机</strong>：蒙特卡洛是给确定性模型做检验的，不是拿来挡建模偷懒的；② <strong>记录复杂度</strong>：估算 O(N²) 是否可接受，不可接受就抽样/分块（手册 Step 7）；③ <strong>每个算法给参数表</strong>：种群、代数、收敛阈值写进附录，评委复核全靠它。</p>
+
+<h2>四、练一练</h2>
+
+<h3>练习 A · 检索回忆</h3>
+<div id="quiz-a"></div>
+
+<h3>练习 B · 弹药库验收清单（勾完为止，进度自动保存）</h3>
+<div id="check-b"></div>
+
+<h2>五、学完之后</h2>
+<div class="callout">
+  <span class="t">本课主推阅读</span>
+  《数学建模全流程_精编手册》第二部分 Step 7「求解设计」——初值 + 精修 + 判据的完整套路（2025B 案例）。
+</div>
+<div class="callout warn">
+  <span class="t">跑不通就贴报错来问</span>
+  把报错原文发回 ZCode 会话，我帮你调——别在环境问题上烧赛场时间，赛前烧更便宜。
+</div>
+
+<footer>
+  <nav>
+    <a href="0003-标签到模型-方法选型实操.html">← 第 3 课</a>
+    <a href="../analysis/reports/方法选用图谱.md">方法图谱</a>
+    <a href="0005-写作骨架与摘要五遍法.html">第 5 课 →</a>
+  </nav>
+  <span>数学建模国赛 · 队长课程 · 第 04 课 · 2026-08-31 生成</span>
+</footer>
+
+<script>
+renderQuiz("#quiz-a", {
+  questions: [
+    {
+      q: "1. 弹药库每一件「武器」的验收标准是？",
+      options: ["代码超过千行", "有华丽大项目", "能跑通最小例"],
+      answer: 2,
+      explain: "手册原话：每个模板都要有「能跑通的最小示例」。赛场要的是 5 分钟就能调用改造的模板，不是项目。"
+    },
+    {
+      q: "2. 为什么弹药库必须赛前在本机离线跑通？",
+      options: ["赛场网络不稳", "显得更加专业", "防止被人抄袭"],
+      answer: 0,
+      explain: "赛场网络与环境不可控，装包失败一次可能烧掉两小时。全部模板离线可跑是赛前清单的硬项。"
+    }
+  ]
+});
+
+renderChecklist("#check-b", {
+  title: "弹药库验收",
+  store: "l04-arsenal",
+  items: [
+    "本机 Python 离线环境可跑（numpy / scipy / pandas / statsmodels / matplotlib 已装好）",
+    "① 最小二乘拟合模板：跑通并输出 R²",
+    "② 0-1 规划模板：在小算例上跑通，能打印决策串和最优值",
+    "③ PSO 骨架：跑通示例函数，尝试改目标函数重跑一次",
+    "④ 灵敏度扫描模板：对一个假想参数输出 ±10% 三行结果",
+    "⑤ LMM 三行模板：用任意小数据集跑通 summary",
+    "所有模板归档进一个固定文件夹，三名队员都有一份"
+  ]
+});
+</script>
+
+</body>
+</html>
